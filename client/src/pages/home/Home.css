@@ -1,0 +1,46 @@
+body, h1, h2, h3, h4, h5, h6, p, a, button {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+footer ul li a:hover {
+  color: #0dcaf0;
+}
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+.footer-container {
+  padding: 2rem 1rem;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.footer-brand,
+.footer-links,
+.footer-social {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-brand h4,
+.footer-links h5,
+.footer-social h5 {
+  margin-bottom: 1rem;
+  font-weight: bolder;
+}
+
+.social-icons a {
+  margin-right: 1rem;
+  color: #4B3869;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.social-icons a:hover {
+  color: #6f42c1;
+}
+
