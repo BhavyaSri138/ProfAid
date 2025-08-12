@@ -15,6 +15,7 @@ const seedData = async () => {
       name: 'Bhavya Sri',
       email: 'bhavyasri@rgukt.ac.in',
       password: 'student123',
+      id:'o210138',
       department: 'CSE',
       year: '3rd Year',
     });

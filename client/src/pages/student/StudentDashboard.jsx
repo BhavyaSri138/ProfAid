@@ -1,11 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const StudentDashboard = () => {
-  const [doubts, setDoubts] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const studentEmail = localStorage.getItem("email");
+
+  const dummyDoubts = [
+    {
+      title: "What is React?",
+      description: "I want to understand the basic concepts of React.js.",
+      status: "pending",
+      reply: "",
+    },
+    {
+      title: "Difference between var, let, const",
+      description: "In JavaScript, when should we use each?",
+      status: "answered",
+      reply: "Use let/const in modern code; var is function-scoped.",
+    },
+  ];
+
+  // Start with dummy data immediately
+  const [doubts, setDoubts] = useState(dummyDoubts);
 
   const logoutHandler = () => {
     localStorage.clear();
@@ -13,49 +31,43 @@ const StudentDashboard = () => {
   };
 
   const createDoubtHandler = () => {
-    navigate("/student/ask");
+    navigate("/student/ask", { state: { email: studentEmail } });
   };
 
   useEffect(() => {
-  const fetchDoubts = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/doubts/student/${studentEmail}`);
-      setDoubts(res.data);
-    } catch (error) {
-      console.error("Error fetching doubts, using dummy data instead:", error);
+    const fetchDoubts = async () => {
+      try {
+        if (!studentEmail) throw new Error("No email found in localStorage");
 
-      // Fallback dummy data
-      const dummy = [
-        {
-          _id: "1",
-          title: "Issue with useState",
-          description: "Why doesn't my component re-render after setting state?",
-          status: "answered",
-          reply: "Use the setter function; avoid mutating state directly.",
-        },
-        {
-          _id: "2",
-          title: "How to center a div?",
-          description: "I want to center a div both horizontally and vertically.",
-          status: "pending",
-          reply: "",
-        },
-      ];
+        const res = await axios.get(
+          `http://localhost:5000/api/doubts/student/${studentEmail}`
+        );
 
-      setDoubts(dummy);
+        const fetched = Array.isArray(res.data) ? res.data : [];
+        // Merge fetched doubts without duplicating dummy
+        setDoubts([...dummyDoubts, ...fetched]);
+      } catch (error) {
+        console.error("Error fetching doubts:", error);
+        setDoubts(dummyDoubts); // fallback
+      }
+    };
+
+    fetchDoubts();
+  }, [studentEmail]);
+
+  useEffect(() => {
+    if (location.state?.newDoubt) {
+      setDoubts((prev) => [location.state.newDoubt, ...prev]);
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  };
-
-  fetchDoubts();
-}, [studentEmail]);
-
+  }, [location.state, navigate, location.pathname]);
 
   const total = doubts.length;
   const pending = doubts.filter((d) => d.status === "pending").length;
   const answered = doubts.filter((d) => d.status === "answered").length;
 
   return (
-    <div style={{ backgroundColor: "#f5f2fc", minHeight: "100vh", padding: "20px" ,width:'100vw'}}>
+    <div style={{ backgroundColor: "#f5f2fc", minHeight: "100vh", padding: "20px", width: "100vw" }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4 p-3 rounded shadow-sm bg-white">
         <h3 style={{ color: "#4B3869", fontWeight: "600", margin: 0 }}>ProfAid – Student Dashboard</h3>
@@ -65,7 +77,7 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* Overview Stats */}
+      {/* Stats */}
       <div className="row g-3 mb-4">
         <div className="col-md-4">
           <div className="p-3 rounded shadow-sm text-white" style={{ backgroundColor: "#6B4EA0" }}>
@@ -87,7 +99,7 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* Doubts List */}
+      {/* Doubts Table */}
       <div className="bg-white rounded shadow-sm p-4 mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <h5 style={{ color: "#4B3869", fontWeight: "600" }}>Your Doubts</h5>
@@ -110,16 +122,12 @@ const StudentDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {doubts.map((doubt) => (
-                  <tr key={doubt._id}>
+                {doubts.map((doubt, index) => (
+                  <tr key={doubt._id || index}>
                     <td>{doubt.title}</td>
                     <td>{doubt.description}</td>
                     <td>
-                      <span
-                        className={`badge ${
-                          doubt.status === "answered" ? "bg-success" : "bg-warning text-dark"
-                        }`}
-                      >
+                      <span className={`badge ${doubt.status === "answered" ? "bg-success" : "bg-warning text-dark"}`}>
                         {doubt.status}
                       </span>
                     </td>

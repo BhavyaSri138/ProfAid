@@ -3,8 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
-const app = express();
 dotenv.config();
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -15,10 +15,7 @@ connectDB();
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-const doubtRoutes = require('./routes/doubtRoutes');
-
-app.use('/api/doubts', doubtRoutes);
-
+app.use('/api/doubts', require('./routes/doubtRoutes')); // ✅ use router
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
