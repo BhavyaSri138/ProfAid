@@ -7,6 +7,8 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import "bootstrap/dist/css/bootstrap.min.css";
 import AskDoubt from './pages/student/AskDoubt'; // Import AskDoubt component
+import AddProfessor from './pages/admin/AddProfessor';
+import AddStudent from './pages/admin/AddStudent';
 
 
 function App() {
@@ -15,10 +17,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/professor/dashboard" element={<ProfessorDashboard />} />
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/professor" element={<ProfessorDashboard />} />
+        <Route path="/student" element={<StudentDashboard />} />
         <Route path="/student/ask" element={<AskDoubt />} /> 
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/add-professor" element={<AddProfessor />} />
+        <Route path="/add-student" element={<AddStudent />} />
       </Routes>
     </Router>
   );
